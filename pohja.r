@@ -1,10 +1,6 @@
 #install.packages('forecast')
 library(forecast)
 
-#PI: Automaattinen ratkaisin?
-aele=auto.arima(ele)
-
-
 
 #setwd('Z:/Documents') #RStudiossa t?m?n voi tehd? my?s valikosta Session->Set working directory
 #Luetaan s?hk?nkulutus- ja l?mp??tiladata, hyp?t??nn headerrivin yli
@@ -12,6 +8,14 @@ eletemp = read.table(file = "sahko.csv", sep = ";", dec = ",", skip = 1)
 
 #S?hk?nkulutus aikasarjaksi
 ele = ts(eletemp[[1]][1:816], start = 1, frequency = 24)
+
+
+#PI: Automaattinen ratkaisin?
+elePartial = ts(eletemp[[1]][1:(816-24)], start = 1, frequency = 24)
+aele=auto.arima(elePartial)
+aenne=predict(aele, n.ahead = 24)
+ts.plot(ele, elePartial + aenne, col = c("red", "blue", "blue"))
+
 
 #L?mp?tila kahdeksi aikasarjaksi: 816 ensimm?ist? havaintoa k?ytet??n mallin estimointiin ja 24 viimeist? havaintoa ennustamiseen.
 temp = ts(eletemp[[2]], start = 1, frequency = 24)
@@ -68,7 +72,7 @@ malli = arima(ele, order = c(p,d,q), seasonal = list(order = c(P, D, Q), period 
 enne = predict(malli, n.ahead = 24)
 
 #Estimoidaan malli l?mp?tilan kanssa. M??r?? l?mp?tilan mahdollinen viive L. Poista #-merkit riveilt? 47-52.
-#L = ?
+#L = 0
 #tempestimointi = eletemp[[2]][1:(816-L)]
 #tempennuste = eletemp[[2]][(816-L+1):(816-L+24)]
 #eleestimointi = ts(eletemp[[1]][(1+L):816], start = 1, frequency = 24)
