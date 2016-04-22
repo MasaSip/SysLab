@@ -12,9 +12,11 @@ ele = ts(eletemp[[1]][1:816], start = 1, frequency = 24)
 
 #PI: Automaattinen ratkaisin?
 elePartial = ts(eletemp[[1]][1:(816-24)], start = 1, frequency = 24)
-aele=auto.arima(elePartial)
-aenne=predict(aele, n.ahead = 24)
-ts.plot(ele, elePartial + aenne, col = c("red", "blue", "blue"))
+# aele = auto.arima(elePartial)
+# ARIMA(3,1,0)(2,0,0)[24]
+# aenne = predict(aele, n.ahead = 24)
+# MA: kommentoin koska heitti erroria
+# ts.plot(ele, elePartial + aenne, col = c("red", "blue", "blue"))
 
 
 #Lampotila kahdeksi aikasarjaksi: 816 ensimmaista havaintoa kaytetaan mallin estimointiin ja 24 viimeista havaintoa ennustamiseen.
@@ -35,6 +37,7 @@ acf(temp, lag.max=168, type = "partial")
 
 par(mfrow=c(1,1))
 ccf(ele,temp, lag.max=168)
+# MS: Kuvan persuteella lämpötilan vaikutus korrelaatioon on suurimmillaan jos kulutusta vertaaa lämpötilaan 14 tuntia sitten
 
 #Stationarisoidaan aikasarjat. Huomaa, etta sahkonkulutuksen ja lampotilan aikasarjojen differointien asteiden ei valttamatta tarvitse olla samoja. Sijoita differoinnin kertaluku d, kausidifferoinnin jakso S, kausidifferensoinnin kertaluku D ja poista rivit 24-28 kommenteista.
 d = 1
@@ -93,3 +96,4 @@ par(mfrow=c(1,1))
 #Kirjoitetaan ennuste ja luottamusvalit .csv-tiedostoon, jonka voi avata Excelilla. Poista #-merkit riveilta 66-67.
 #output = cbind(enne$pred, enne$pred + 1.96*enne$se, enne$pred - 1.96*enne$se)
 #write.csv2(output, file = "ennuste.csv")
+
