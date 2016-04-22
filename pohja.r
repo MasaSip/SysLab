@@ -1,6 +1,9 @@
 #install.packages('forecast')
 library(forecast)
 
+cat("\014")
+rm(list = ls())
+dev.off(dev.list()["RStudioGD"])
 
 #setwd('Z:/Documents') #RStudiossa taman voi tehda myos valikosta Session->Set working directory
 #Luetaan sahkonkulutus- ja lampotiladata, hypataann header-rivin yli
@@ -11,10 +14,11 @@ ele = ts(eletemp[[1]][1:816], start = 1, frequency = 24)
 
 
 #PI: Automaattinen ratkaisin?
-elePartial = ts(eletemp[[1]][1:(816-24)], start = 1, frequency = 24)
-aele=auto.arima(elePartial)
-aenne=predict(aele, n.ahead = 24)
-ts.plot(ele, elePartial + aenne, col = c("red", "blue", "blue"))
+#elePartial = ts(eletemp[[1]][1:(816-24)], start = 1, frequency = 24)
+#aele=auto.arima(elePartial)
+#aenne=predict(aele, n.ahead = 24)
+#ts.plot(ele, append(elePartial,aenne$pred), col = c("red", "blue"))
+aele=auto.arima(ele)
 
 
 #Lampotila kahdeksi aikasarjaksi: 816 ensimmaista havaintoa kaytetaan mallin estimointiin ja 24 viimeista havaintoa ennustamiseen.
@@ -72,23 +76,23 @@ malli = arima(ele, order = c(p,d,q), seasonal = list(order = c(P, D, Q), period 
 enne = predict(malli, n.ahead = 24)
 
 #Estimoidaan malli lampotilan kanssa. Maaraa lampotilan mahdollinen viive L. Poista #-merkit riveilta 47-52.
-#L = 0
-#tempestimointi = eletemp[[2]][1:(816-L)]
-#tempennuste = eletemp[[2]][(816-L+1):(816-L+24)]
-#eleestimointi = ts(eletemp[[1]][(1+L):816], start = 1, frequency = 24)
-#malli2 = arima(eleestimointi, order = c(p,d,q), seasonal = list(order = c(P, D, Q), period = S), xreg = tempestimointi, method = "CSS")
-#enne2 = predict(malli2, n.ahead = 24, newxreg = tempennuste)
+L = 0
+tempestimointi = eletemp[[2]][1:(816-L)]
+tempennuste = eletemp[[2]][(816-L+1):(816-L+24)]
+eleestimointi = ts(eletemp[[1]][(1+L):816], start = 1, frequency = 24)
+malli2 = arima(eleestimointi, order = c(p,d,q), seasonal = list(order = c(P, D, Q), period = S), xreg = tempestimointi, method = "CSS")
+enne2 = predict(malli2, n.ahead = 24, newxreg = tempennuste)
 
 #Esimerkki Portmanteau-testista. Poista #-merkki. Onko residuaaliaikasarjan alussa nollia?
-#Box.test(malli$residuals, lag = 20, type = "Ljung-Box", fitdf = p + q + P + Q)
+Box.test(malli$residuals, lag = 20, type = "Ljung-Box", fitdf = p + q + P + Q)
 
 par(mfrow=c(1,1))
 
 #Plotataan kuva sahkonkulutusaikasarjasta, mallin (1) sovitteesta, ennusteesta ja ennusteen 95 %:n eli 1,96*sigma-luottamusvaleista. Poista #-merkki.
-#ts.plot(ele, ele - malli$residuals, enne$pred, enne$pred + 1.96*enne$se, enne$pred - 1.96*enne$se, col = c("black", "red", "blue", "blue", "blue"), main  = "Sovite ja ennuste")
+ts.plot(ele, ele - malli$residuals, enne$pred, enne$pred + 1.96*enne$se, enne$pred - 1.96*enne$se, col = c("black", "red", "blue", "blue", "blue"), main  = "Sovite ja ennuste")
 
 #Plotataan kuva pelkasta ennusteesta. Poista #-merkki.
-#ts.plot(enne$pred, enne$pred + 1.96*enne$se, enne$pred - 1.96*enne$se, col = c("black", "blue", "blue"), main = "Ennuste ja  95 %:n luottamusvalit")
+ts.plot(enne$pred, enne$pred + 1.96*enne$se, enne$pred - 1.96*enne$se, col = c("black", "blue", "blue"), main = "Ennuste ja  95 %:n luottamusvalit")
 
 #Kirjoitetaan ennuste ja luottamusvalit .csv-tiedostoon, jonka voi avata Excelilla. Poista #-merkit riveilta 66-67.
 #output = cbind(enne$pred, enne$pred + 1.96*enne$se, enne$pred - 1.96*enne$se)
