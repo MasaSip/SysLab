@@ -88,5 +88,6 @@ ts.plot(ele[717:816], aenne$pred, col = c("red", "blue"))
 
 #APUOSIO SIMULOINTIA VARTEN
 simu=arima.sim(list(ar=c(0.5,0.2,0.1),ma=c(1,1,1)), n = 200)
+plot(simu)
 acf(simu)
 pacf(simu)

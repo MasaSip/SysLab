@@ -42,7 +42,8 @@ par(mfrow=c(1,1))
 ccf(ele,temp, lag.max=168)
 # MS: Kuvan persuteella lämpötilan vaikutus korrelaatioon on suurimmillaan jos kulutusta vertaaa lämpötilaan 14 tuntia sitten
 
-#Stationarisoidaan aikasarjat. Huomaa, etta sahkonkulutuksen ja lampotilan aikasarjojen differointien asteiden ei valttamatta tarvitse olla samoja. Sijoita differoinnin kertaluku d, kausidifferoinnin jakso S, kausidifferensoinnin kertaluku D ja poista rivit 24-28 kommenteista.
+# Stationarisoidaan aikasarjat. Huomaa, etta sahkonkulutuksen ja lampotilan aikasarjojen differointien asteiden ei valttamatta tarvitse olla samoja. 
+# Sijoita differoinnin kertaluku d, kausidifferoinnin jakso S, kausidifferensoinnin kertaluku D ja poista rivit 24-28 kommenteista.
 d = 1
 S = 24
 D = 0
@@ -57,7 +58,8 @@ dele = diff(dele, lag = S, differences = D)
 dtemp = diff(dtemp, lag = S, differences = D)
 }
 
-#Differoitujen aikasarjojen autokorrelaatio-, osittaisautokorrelaatio- ja ristikorrelaatiofunktiot. Poista rivit 31-34 kommenteista, kun dele ja dtemp on maaratty.
+#Differoitujen aikasarjojen autokorrelaatio-, osittaisautokorrelaatio- ja ristikorrelaatiofunktiot. 
+# Poista rivit 31-34 kommenteista, kun dele ja dtemp on maaratty.
 par(mfrow=c(2,2))
 acf(dele, lag.max=168)
 acf(dele, lag.max=168, type = "partial")
@@ -77,8 +79,8 @@ Q = 0
 malli = arima(ele, order = c(p,d,q), seasonal = list(order = c(P, D, Q), period = S), method = "CSS")
 enne = predict(malli, n.ahead = 24)
 
-#Estimoidaan malli lampotilan kanssa. Maaraa lampotilan mahdollinen viive L. Poista #-merkit riveilta 47-52.
-L = 0
+#Estimoidaan malli lampotilan kanssa. Maaraa lampotilan mahdollinen viive L. Ennustetaan ele datan ulkopuolelle
+L = 14
 tempestimointi = eletemp[[2]][1:(816-L)]
 tempennuste = eletemp[[2]][(816-L+1):(816-L+24)]
 eleestimointi = ts(eletemp[[1]][(1+L):816], start = 1, frequency = 24)
