@@ -31,6 +31,7 @@ temp24 = ts(eletemp[[2]][817:840], start = c(35,1), frequency = 24) #start param
 ts.plot(ele, gpars=list(xlab="aika/vrk", ylab = "kulutus/kWh"))
 ts.plot(temp816,temp24, gpars=list(xlab="aika/vrk", ylab=expression(~degree~C), col = c("black", "blue")))
 
+
 #Plotataan autokorrelaatio-, osittaisautokorrelaatio- ja ristikorrelaatiofunktiot.
 par(mfrow=c(2,2)) 				#jos haluat katsoa kuvia 2x2 matriisin sijaan yksitellen, laita tama rivi kommentteihin (#-merkki)
 acf(ele, lag.max=168)
@@ -69,7 +70,7 @@ par(mfrow=c(1,1))
 ccf(dele, dtemp, lag.max=168)
 
 ts.plot(dele)
-ts.plot(dtemp)
+ts.plot(dtemp[1:100])
 
 #Estimoidaan malli ja lasketaan ennusteet ilman ulkoista muuttujaa. Maaraa mallin parametrit p, q, P ja Q ja poista #-merkit riveilta 37-42.
 p = 3
