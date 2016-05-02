@@ -3,7 +3,7 @@ library(forecast)
 
 cat("\014")
 rm(list = ls())
-dev.off(dev.list()["RStudioGD"])
+#dev.off(dev.list()["RStudioGD"])
 
 #setwd('Z:/Documents') #RStudiossa taman voi tehda myos valikosta Session->Set working directory
 eletemp = read.table(file = "sahko.csv", sep = ";", dec = ",", skip = 1)
@@ -18,7 +18,7 @@ ele = ts(eletemp[[1]][1:816], start = 1, frequency = 24)
 holdout = 100
 
 
-lag = 14
+lag = 12
 temp_estimointi = eletemp[[2]][1:(816-lag-holdout)]
 temp_ennuste = eletemp[[2]][(816-lag-holdout+1):(816-lag)]
 par(mfrow=c(3,1))
